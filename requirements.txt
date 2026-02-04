@@ -1,0 +1,15 @@
+# A-FIN Dependencies
+# Install with: pip install -r requirements.txt
+
+# CrewAI - the multi-agent orchestration framework
+crewai[tools]>=0.28.0
+
+# Google Gemini
+google-generativeai>=0.3.0
+
+# yfinance - for fetching stock market data
+yfinance>=0.2.36
+
+streamlit>=1.31.0
+python-dotenv>=1.0.0
+requests>=2.31.0
