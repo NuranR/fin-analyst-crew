@@ -1,8 +1,8 @@
-# A-FIN Dependencies
 # Install with: pip install -r requirements.txt
 
 # CrewAI - the multi-agent orchestration framework
 crewai[tools]>=0.28.0
+crewai[google-genai]
 
 # Google Gemini
 google-generativeai>=0.3.0
