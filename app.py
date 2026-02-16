@@ -3,7 +3,7 @@ import streamlit as st
 
 os.environ["CREWAI_TELEMETRY_OPT_OUT"] = "true"
 
-from crew import run_analysis, get_company_name
+from crew import run_analysis_concurrent, run_analysis, get_company_name
 
 
 # Page configuration
@@ -57,6 +57,14 @@ st.markdown("""
 - 🎯 **Lead Analyst** - Synthesizes everything into a recommendation
 """)
 
+# Execution mode selector
+execution_mode = st.radio(
+    "Execution Mode:",
+    ["⚡ Concurrent (Fast)", "📝 Sequential (Standard)"],
+    horizontal=True,
+    help="Concurrent executes first 3 agents in parallel, Sequential runs them one by one"
+)
+
 # Input section
 col1, col2, col3 = st.columns([1, 2, 1])
 
@@ -78,16 +86,37 @@ if analyze_button:
         st.markdown("---")
         st.subheader(f"Analyzing: {company_name} ({ticker})")
         
+        # Determine which execution mode to use
+        use_concurrent = "Concurrent" in execution_mode
+        
         # Create a placeholder for status updates
         status_placeholder = st.empty()
         
         # Show a spinner while the crew works
-        with st.spinner("🔍 Our AI analysts are researching... This may take 1-2 minutes."):
+        mode_text = "parallel" if use_concurrent else "sequential"
+        with st.spinner(f"🔍 Our AI analysts are researching ({mode_text} mode)... This may take 1-2 minutes."):
             try:
-                status_placeholder.info("📰 Data Journalist is gathering news...")
-                result = run_analysis(ticker)
+                if use_concurrent:
+                    # Run with concurrent execution
+                    result_data = run_analysis_concurrent(ticker)
+                    result = result_data["result"]
+                    timing = result_data["timing"]
+                    
+                    # Display timing metrics
+                    st.success("✅ Analysis Complete!")
+                    col1, col2, col3 = st.columns(3)
+                    with col1:
+                        st.metric("⚡ Parallel Research", f"{timing['parallel_research']:.2f}s")
+                    with col2:
+                        st.metric("🎯 Final Synthesis", f"{timing['final_synthesis']:.2f}s")
+                    with col3:
+                        st.metric("⏱️ Total Time", f"{timing['total']:.2f}s")
+                                        
+                else:
+                    # Run with sequential execution (original)
+                    result = run_analysis(ticker)
                 
-                # Clear the status and show results
+                # Clear the status placeholder
                 status_placeholder.empty()
                 
                 # Display the final recommendation
