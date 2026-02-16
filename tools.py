@@ -24,7 +24,7 @@ def fetch_news(company_name: str) -> str:
     Returns:
         A formatted string with recent news headlines and descriptions
     """
-    # NewsAPI endpoint - we're searching for everything mentioning our company
+    # NewsAPI endpoint - search for everything
     url = "https://newsapi.org/v2/everything"
     
     params = {
@@ -32,7 +32,7 @@ def fetch_news(company_name: str) -> str:
         "apiKey": NEWS_API_KEY,
         "language": "en",
         "sortBy": "publishedAt",  # Most recent first
-        "pageSize": 5  # Just grab 5 articles - enough for analysis without overwhelming
+        "pageSize": 5  # Grab 5 articles - enough for analysis without overwhelming
     }
     
     try:
